@@ -109,7 +109,7 @@ void onMsgReceived2(void)
     }
 }
 
-void serial_isr(void)
+void operation(void)
 {
     if (x > 0) {
         if(0 < x && x < 99) {
@@ -125,6 +125,11 @@ void serial_isr(void)
             x++;
         }
     }
+}
+
+void serial_isr(void)
+{
+    operation();
 
     can1.write(txMsg1);
     can1.write(txMsg2);
