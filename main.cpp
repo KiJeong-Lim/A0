@@ -1,5 +1,4 @@
 #include "capstone.hpp"
-#include "mbed2/299/drivers/CAN.h"
 
 #define P_MIN   (-12.5f)
 #define P_MAX   (12.5f)
