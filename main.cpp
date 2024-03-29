@@ -38,19 +38,16 @@ float theta[6], omega[6];
 
 void pack_cmd(CANMessage *msg, float p_des, float v_des, float kp, float kd, float t_ff)
 {
-    /// limit data to be within bounds ///
     p_des = fminf(fmaxf(P_MIN, p_des), P_MAX);                    
     v_des = fminf(fmaxf(V_MIN, v_des), V_MAX);
     kp = fminf(fmaxf(KP_MIN, kp), KP_MAX);
     kd = fminf(fmaxf(KD_MIN, kd), KD_MAX);
     t_ff = fminf(fmaxf(T_MIN, t_ff), T_MAX);
-    /// convert floats to unsigned ints ///
     int p_int  = float_to_uint(p_des, P_MIN, P_MAX, 16);            
     int v_int  = float_to_uint(v_des, V_MIN, V_MAX, 12);
     int kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
     int kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
     int t_int  = float_to_uint(t_ff, T_MIN, T_MAX, 12);
-    /// pack ints into the can buffer ///
     msg->data[0] = p_int>>8;                                       
     msg->data[1] = p_int&0xFF;
     msg->data[2] = v_int>>4;
