@@ -109,27 +109,30 @@ void onMsgReceived2(void)
     }
 }
 
-void operation(void)
+bool operation(void)
 {
-    if (x > 0) {
-        if(0 < x && x < 99) {
-            pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);    
-            x++;
-        }
-        else if(99 < x && x < 199) {
-            pack_cmd(&txMsg1, -0.1, 0, 18, 3.5, 0);
-            pack_cmd(&txMsg2, -0.115, 0, 18, 3.5, 0);
-            pack_cmd(&txMsg3, 0, 0, 15, 3, 0);
-            x++;
-        }
+    if (0 < x && x < 99) {
+        pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
+        pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
+        pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);    
+        return true;
     }
+    if (99 < x && x < 199) {
+        pack_cmd(&txMsg1, -0.1, 0, 18, 3.5, 0);
+        pack_cmd(&txMsg2, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(&txMsg3, 0, 0, 15, 3, 0);
+        return true;
+    }
+    return false;
 }
 
 void serial_isr(void)
 {
-    operation();
+    if (x > 0) {
+        const bool xpp = operation();
+        if (xpp)
+            x++;
+    }
 
     can1.write(txMsg1);
     can1.write(txMsg2);
@@ -158,7 +161,6 @@ void command(void)
         const char c = pc.getc();
         switch (c) {
         case 27:
-            printf("\n\r Exiting motor mode \n\r");
             txMsg1.data[0] = 0xFF;
             txMsg1.data[1] = 0xFF;
             txMsg1.data[2] = 0xFF;
@@ -207,10 +209,10 @@ void command(void)
             txMsg6.data[5] = 0xFF;
             txMsg6.data[6] = 0xFF;
             txMsg6.data[7] = 0xFD;
+            printf("\n\r Exiting motor mode \n\r");
             break;
 
         case 'm':
-            printf("\n\r Entering motor mode \n\r");
             txMsg1.data[0] = 0xFF;
             txMsg1.data[1] = 0xFF;
             txMsg1.data[2] = 0xFF;
@@ -259,10 +261,10 @@ void command(void)
             txMsg6.data[5] = 0xFF;
             txMsg6.data[6] = 0xFF;
             txMsg6.data[7] = 0xFC;
+            printf("\n\r Entering motor mode \n\r");
             break;
 
         case 'z':
-            printf("\n\r Set zero \n\r");
             txMsg1.data[0] = 0xFF;
             txMsg1.data[1] = 0xFF;
             txMsg1.data[2] = 0xFF;
@@ -311,10 +313,10 @@ void command(void)
             txMsg6.data[5] = 0xFF;
             txMsg6.data[6] = 0xFF;
             txMsg6.data[7] = 0xFE;
+            printf("\n\r Set zero \n\r");
             break;
 
         case '1':
-            printf("\n\r 1st motor rest position \n\r");
             txMsg1.data[0] = 0x7F;
             txMsg1.data[1] = 0xFF;
             txMsg1.data[2] = 0x7F;
@@ -323,10 +325,10 @@ void command(void)
             txMsg1.data[5] = 0x00;
             txMsg1.data[6] = 0x07;
             txMsg1.data[7] = 0xFF;
+            printf("\n\r 1st motor rest position \n\r");
             break;
 
         case '2':
-            printf("\n\r 2nd motor rest position \n\r");
             txMsg2.data[0] = 0x7F;
             txMsg2.data[1] = 0xFF;
             txMsg2.data[2] = 0x7F;
@@ -334,11 +336,11 @@ void command(void)
             txMsg2.data[4] = 0x00;
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
-            txMsg2.data[7] = 0xFF;               
+            txMsg2.data[7] = 0xFF;
+            printf("\n\r 2nd motor rest position \n\r");            
             break;
 
         case '3':
-            printf("\n\r 3rd motor rest position \n\r");
             txMsg3.data[0] = 0x7F;
             txMsg3.data[1] = 0xFF;
             txMsg3.data[2] = 0x7F;
@@ -347,10 +349,10 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
+            printf("\n\r 3rd motor rest position \n\r");
             break;
 
         case '4':
-            printf("\n\r 4th motor rest position \n\r");
             txMsg4.data[0] = 0x7F;
             txMsg4.data[1] = 0xFF;
             txMsg4.data[2] = 0x7F;
@@ -359,10 +361,10 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
+            printf("\n\r 4th motor rest position \n\r");
             break;
 
         case '5':
-            printf("\n\r 5th motor rest position \n\r");
             txMsg5.data[0] = 0x7F;
             txMsg5.data[1] = 0xFF;
             txMsg5.data[2] = 0x7F;
@@ -371,10 +373,10 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
+            printf("\n\r 5th motor rest position \n\r");
             break;
 
         case '6':
-            printf("\n\r 6th motor rest position \n\r");
             txMsg6.data[0] = 0x7F;
             txMsg6.data[1] = 0xFF;
             txMsg6.data[2] = 0x7F;
@@ -383,20 +385,21 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
+            printf("\n\r 6th motor rest position \n\r");
             break;
 
         case 'r':
-            printf("\n\r run \n\r");
             x = 1;
             obs = 0;
             logger = 1;
+            printf("\n\r run \n\r");
             break;
 
         case 'o':
-            printf("\n\r observe \n\r");
             x = 0;
             obs = 0;
             logger = 0;
+            printf("\n\r observe \n\r");
             break;
 
         case 'b':
