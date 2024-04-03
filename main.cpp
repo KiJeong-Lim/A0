@@ -136,7 +136,6 @@ bool operation(void)
     pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
     pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
     pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
-
 #endif
     return false;
 }
