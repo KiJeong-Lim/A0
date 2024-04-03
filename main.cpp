@@ -111,7 +111,7 @@ void onMsgReceived2(void)
 
 bool operation(void)
 {
-    if (0 < x && x < 99) {
+    if (0 < x && x <= 99) {
         pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
         pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
         pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);
@@ -120,7 +120,7 @@ bool operation(void)
         pack_cmd(&txMsg6, -0.20, 0, 4, 3, 0);  
         return true;
     }
-    if (99 < x && x < 199) {
+    if (99 < x && x <= 199) {
         pack_cmd(&txMsg1, -0.1, 0, 18, 3.5, 0);
         pack_cmd(&txMsg2, -0.115, 0, 18, 3.5, 0);
         pack_cmd(&txMsg3, 0, 0, 15, 3, 0);
@@ -158,6 +158,7 @@ void serial_isr(void)
             for (int i = 0; i < 6; i++) {
                 printf("\rtheta%d(%ld)=%f; omega%d(%ld)=%f;\n", i + 1, logger, theta[i], i + 1, logger, omega[i]);
             }
+            printf("x = %ld\n", x);
             obs = 0;
             if (logger > 0)
                 logger++;
