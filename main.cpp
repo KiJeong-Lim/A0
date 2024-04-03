@@ -128,7 +128,13 @@ bool operation(void)
         pack_cmd(&txMsg5, -0.115, 0, 18, 3.5, 0);
         pack_cmd(&txMsg6, 0, 0, 15, 3, 0);    
         return true;
-    }
+    }   
+    pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
+    pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
+    pack_cmd(&txMsg3, 0, 0, 0, 0, 0);
+    pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
+    pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
+    pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
     return false;
 }
 
