@@ -114,19 +114,19 @@ bool operation(void)
     if (0 < x && x < 99) {
         pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
         pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);   
+        pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);
         pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
         pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg6, -0.20, 0, 4, 3, 0);   
+        pack_cmd(&txMsg6, -0.20, 0, 4, 3, 0);  
         return true;
     }
     if (99 < x && x < 199) {
         pack_cmd(&txMsg1, -0.1, 0, 18, 3.5, 0);
         pack_cmd(&txMsg2, -0.115, 0, 18, 3.5, 0);
         pack_cmd(&txMsg3, 0, 0, 15, 3, 0);
-        pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg6, -0.20, 0, 4, 3, 0);    
+        pack_cmd(&txMsg4, -0.1, 0, 18, 3.5, 0);
+        pack_cmd(&txMsg5, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(&txMsg6, 0, 0, 15, 3, 0);    
         return true;
     }
     return false;
