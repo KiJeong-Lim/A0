@@ -144,11 +144,12 @@ void serial_isr(void)
     if (obs >= 0) {
         if ((obs + 1) % 20 == 0) {
             for (int i = 0; i < 6; i++) {
-                printf("\rtheta%d(%ld)=%f; omega%d(%ld)=%f;\n", i, logger, theta[i], i, logger, omega[i]);
+                printf("\rtheta%d(%ld)=%f; omega%d(%ld)=%f;\n", i + 1, logger, theta[i], i + 1, logger, omega[i]);
             }
             obs = 0;
             if (logger > 0)
                 logger++;
+            printf("\n");
         }
         else
             obs++;
@@ -392,14 +393,14 @@ void command(void)
             x = 1;
             obs = 0;
             logger = 1;
-            printf("\n\r run \n\r");
+            printf("\n\rRun \n\r");
             break;
 
         case 'o':
             x = 0;
             obs = 0;
             logger = 0;
-            printf("\n\r observe \n\r");
+            printf("\n\rObserve \n\r");
             break;
 
         case 'b':
@@ -418,8 +419,8 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
-            printf("\n\r break \n\r");
-            break;
+            printf("\n\rBreak \n\r");
+            return;
 
         case ' ':
             pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
@@ -491,15 +492,20 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
-            printf("\n\r emergency stop \n\r");
-            break;
+            printf("\n\rEmergency stop \n\r");
+            return;
         }
     }
+    can1.write(txMsg1);
+    can1.write(txMsg2);
+    can1.write(txMsg3);
+    can2.write(txMsg4);
+    can2.write(txMsg5);
+    can2.write(txMsg6);
 }
 
 int main(void)
 {
-    printf("\n\r init \n\r");
     pc.baud(921600);
     pc.attach(&command);
     txMsg1.len = 8;
@@ -530,4 +536,5 @@ int main(void)
     pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
     pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
     timer.start();
+    printf("\n\rINIT \n\r");
 }
