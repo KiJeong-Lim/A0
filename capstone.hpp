@@ -1,7 +1,7 @@
 #ifndef CAPSTONE_HPP
 #define CAPSTONE_HPP
 
-#include "math.h"
+#include <cmath>
 #include "mbed.h"
 
 #define PI 3.14159265359f
