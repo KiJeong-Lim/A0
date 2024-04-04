@@ -178,16 +178,16 @@ void command(void)
         switch (c) {
         case 27:
             for (int i = 0; i < 6; i++) {
-                    txMsg[i]->data[0] = 0xFF;
-                    txMsg[i]->data[1] = 0xFF;
-                    txMsg[i]->data[2] = 0xFF;
-                    txMsg[i]->data[3] = 0xFF;
-                    txMsg[i]->data[4] = 0xFF;
-                    txMsg[i]->data[5] = 0xFF;
-                    txMsg[i]->data[6] = 0xFF;
-                    txMsg[i]->data[7] = 0xFD;
+                txMsg[i]->data[0] = 0xFF;
+                txMsg[i]->data[1] = 0xFF;
+                txMsg[i]->data[2] = 0xFF;
+                txMsg[i]->data[3] = 0xFF;
+                txMsg[i]->data[4] = 0xFF;
+                txMsg[i]->data[5] = 0xFF;
+                txMsg[i]->data[6] = 0xFF;
+                txMsg[i]->data[7] = 0xFD;
             }
-            printf("\n\rExiting motor mode \n\r");
+            printf("\n\rExiting motor mode\n\r");
             break;
 
         case 'm':
@@ -201,7 +201,7 @@ void command(void)
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFC;
             }
-            printf("\n\rEntering motor mode \n\r");
+            printf("\n\rEntering motor mode\n\r");
             break;
 
         case 'z':
@@ -215,7 +215,7 @@ void command(void)
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFE;
             }
-            printf("\n\rSet zero \n\r");
+            printf("\n\rSet zero\n\r");
             break;
 
         case '1':
@@ -227,7 +227,7 @@ void command(void)
             txMsg1.data[5] = 0x00;
             txMsg1.data[6] = 0x07;
             txMsg1.data[7] = 0xFF;
-            printf("\n\r1st motor rest position \n\r");
+            printf("\n\r1st motor rest position\n\r");
             break;
 
         case '2':
@@ -239,7 +239,7 @@ void command(void)
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
-            printf("\n\r2nd motor rest position \n\r");            
+            printf("\n\r2nd motor rest position\n\r");            
             break;
 
         case '3':
@@ -251,7 +251,7 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
-            printf("\n\r3rd motor rest position \n\r");
+            printf("\n\r3rd motor rest position\n\r");
             break;
 
         case '4':
@@ -263,7 +263,7 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
-            printf("\n\r4th motor rest position \n\r");
+            printf("\n\r4th motor rest position\n\r");
             break;
 
         case '5':
@@ -275,7 +275,7 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
-            printf("\n\r5th motor rest position \n\r");
+            printf("\n\r5th motor rest position\n\r");
             break;
 
         case '6':
@@ -287,21 +287,21 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
-            printf("\n\r6th motor rest position \n\r");
+            printf("\n\r6th motor rest position\n\r");
             break;
 
         case 'r':
             x = 1;
             obs = 0;
             logger = 1;
-            printf("\n\rRun \n\r");
+            printf("\n\rRun\n\r");
             break;
 
         case 'o':
             x = 0;
             obs = 0;
             logger = 0;
-            printf("\n\rObserve \n\r");
+            printf("\n\rObserve\n\r");
             break;
 
         case 'b':
@@ -320,7 +320,7 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
-            printf("\n\rBreak \n\r");
+            printf("\n\rBreak\n\r");
             return;
 
         case ' ':
@@ -346,16 +346,10 @@ void command(void)
             can2.write(txMsg4);
             can2.write(txMsg5);
             can2.write(txMsg6);
-            can1.write(txMsg1);
-            can1.write(txMsg2);
-            can1.write(txMsg3);
-            can2.write(txMsg4);
-            can2.write(txMsg5);
-            can2.write(txMsg6);
             x = 0;
             obs = -1;
             logger = 0;
-            printf("\n\rEmergency stop \n\r");
+            printf("\n\rEmergency stop\n\r");
             return;
         }
     }
@@ -403,5 +397,5 @@ int main(void)
         omega[i] = 0.0f;
     }
     timer.start();
-    printf("\n\rINIT \n\r");
+    printf("\n\rINIT\n\r");
 }
