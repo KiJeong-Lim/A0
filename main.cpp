@@ -21,6 +21,7 @@ CAN         can2(PB_5, PB_6);
 
 CANMessage  rxMsg1;
 CANMessage  rxMsg2;
+
 CANMessage  txMsg1;
 CANMessage  txMsg2;
 CANMessage  txMsg3;
@@ -37,7 +38,9 @@ long int    logger = 0;
 
 float theta[6], omega[6];
 
-void pack_cmd(CANMessage *msg, float p_des, float v_des, float kp, float kd, float t_ff)
+CANMessage *txMsg[6] = { &txMsg1, &txMsg2, &txMsg3, &txMsg4, &txMsg5, &txMsg6, };
+
+void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff)
 {
     p_des = fminf(fmaxf(P_MIN, p_des), P_MAX);                    
     v_des = fminf(fmaxf(V_MIN, v_des), V_MAX);
@@ -49,14 +52,10 @@ void pack_cmd(CANMessage *msg, float p_des, float v_des, float kp, float kd, flo
     int kp_int = float_to_uint(kp, KP_MIN, KP_MAX, 12);
     int kd_int = float_to_uint(kd, KD_MIN, KD_MAX, 12);
     int t_int  = float_to_uint(t_ff, T_MIN, T_MAX, 12);
-    msg->data[0] = p_int>>8;                                       
-    msg->data[1] = p_int&0xFF;
-    msg->data[2] = v_int>>4;
-    msg->data[3] = ((v_int&0xF)<<4)|(kp_int>>8);
-    msg->data[4] = kp_int&0xFF;
-    msg->data[5] = kd_int>>4;
-    msg->data[6] = ((kd_int&0xF)<<4)|(t_int>>8);
-    msg->data[7] = t_int&0xff;
+    UCh8 pack = { p_int>>8, p_int&0xFF, v_int>>4, ((v_int&0x0F)<<4)|(kp_int>>8), kp_int&0xFF, kd_int>>4, ((kd_int&0x0F)<<4)|(t_int>>8), t_int&0xFF, };
+    for (int i = 0; i < 8; i++) {
+        msg.data[i] = pack.data[i];
+    }
 }
 
 void onMsgReceived1(void)
@@ -65,7 +64,7 @@ void onMsgReceived1(void)
     int id = rxMsg1.data[0];
     int p_int = (rxMsg1.data[1]<<8)|rxMsg1.data[2];
     int v_int = (rxMsg1.data[3]<<4)|(rxMsg1.data[4]>>4);
-    int i_int = ((rxMsg1.data[4]&0xF)<<8)|rxMsg1.data[5];
+    int i_int = ((rxMsg1.data[4]&0x0F)<<8)|rxMsg1.data[5];
     float p = uint_to_float(p_int, P_MIN, P_MAX, 16);
     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
     float i = uint_to_float(i_int, -I_MAX, I_MAX, 12);
@@ -91,7 +90,7 @@ void onMsgReceived2(void)
     int id = rxMsg2.data[0];
     int p_int = (rxMsg2.data[1]<<8)|rxMsg2.data[2];
     int v_int = (rxMsg2.data[3]<<4)|(rxMsg2.data[4]>>4);
-    int i_int = ((rxMsg2.data[4]&0xF)<<8)|rxMsg2.data[5];
+    int i_int = ((rxMsg2.data[4]&0x0F)<<8)|rxMsg2.data[5];
     float p = uint_to_float(p_int, P_MIN, P_MAX, 16);
     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
     float i = uint_to_float(i_int, -I_MAX, I_MAX, 12);
@@ -114,30 +113,30 @@ void onMsgReceived2(void)
 bool operation(void)
 {
     if (0 < x && x <= 99) {
-        pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg3, -0.20, 0, 4, 3, 0);
-        pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(&txMsg6, -0.20, 0, 4, 3, 0);  
+        pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg3, -0.20, 0, 4, 3, 0);
+        pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg6, -0.20, 0, 4, 3, 0);  
         return true;
     }
     if (99 < x && x <= 199) {
-        pack_cmd(&txMsg1, -0.1, 0, 18, 3.5, 0);
-        pack_cmd(&txMsg2, -0.115, 0, 18, 3.5, 0);
-        pack_cmd(&txMsg3, 0, 0, 15, 3, 0);
-        pack_cmd(&txMsg4, -0.1, 0, 18, 3.5, 0);
-        pack_cmd(&txMsg5, -0.115, 0, 18, 3.5, 0);
-        pack_cmd(&txMsg6, 0, 0, 15, 3, 0);    
+        pack_cmd(txMsg1, -0.1, 0, 18, 3.5, 0);
+        pack_cmd(txMsg2, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(txMsg3, 0, 0, 15, 3, 0);
+        pack_cmd(txMsg4, -0.1, 0, 18, 3.5, 0);
+        pack_cmd(txMsg5, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(txMsg6, 0, 0, 15, 3, 0);    
         return true;
     }   
 #if 0
-    pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg3, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg6, 0, 0, 0, 0, 0);
 #endif
     return false;
 }
@@ -179,171 +178,57 @@ void command(void)
         const char c = pc.getc();
         switch (c) {
         case 27:
-            txMsg1.data[0] = 0xFF;
-            txMsg1.data[1] = 0xFF;
-            txMsg1.data[2] = 0xFF;
-            txMsg1.data[3] = 0xFF;
-            txMsg1.data[4] = 0xFF;
-            txMsg1.data[5] = 0xFF;
-            txMsg1.data[6] = 0xFF;
-            txMsg1.data[7] = 0xFD;
-            txMsg2.data[0] = 0xFF;
-            txMsg2.data[1] = 0xFF;
-            txMsg2.data[2] = 0xFF;
-            txMsg2.data[3] = 0xFF;
-            txMsg2.data[4] = 0xFF;
-            txMsg2.data[5] = 0xFF;
-            txMsg2.data[6] = 0xFF;
-            txMsg2.data[7] = 0xFD;
-            txMsg3.data[0] = 0xFF;
-            txMsg3.data[1] = 0xFF;
-            txMsg3.data[2] = 0xFF;
-            txMsg3.data[3] = 0xFF;
-            txMsg3.data[4] = 0xFF;
-            txMsg3.data[5] = 0xFF;
-            txMsg3.data[6] = 0xFF;
-            txMsg3.data[7] = 0xFD;
-            txMsg4.data[0] = 0xFF;
-            txMsg4.data[1] = 0xFF;
-            txMsg4.data[2] = 0xFF;
-            txMsg4.data[3] = 0xFF;
-            txMsg4.data[4] = 0xFF;
-            txMsg4.data[5] = 0xFF;
-            txMsg4.data[6] = 0xFF;
-            txMsg4.data[7] = 0xFD;
-            txMsg5.data[0] = 0xFF;
-            txMsg5.data[1] = 0xFF;
-            txMsg5.data[2] = 0xFF;
-            txMsg5.data[3] = 0xFF;
-            txMsg5.data[4] = 0xFF;
-            txMsg5.data[5] = 0xFF;
-            txMsg5.data[6] = 0xFF;
-            txMsg5.data[7] = 0xFD;
-            txMsg6.data[0] = 0xFF;
-            txMsg6.data[1] = 0xFF;
-            txMsg6.data[2] = 0xFF;
-            txMsg6.data[3] = 0xFF;
-            txMsg6.data[4] = 0xFF;
-            txMsg6.data[5] = 0xFF;
-            txMsg6.data[6] = 0xFF;
-            txMsg6.data[7] = 0xFD;
-            printf("\n\r Exiting motor mode \n\r");
+            for (int i = 0; i < 6; i++) {
+                    txMsg[i]->data[0] = 0xFF;
+                    txMsg[i]->data[1] = 0xFF;
+                    txMsg[i]->data[2] = 0xFF;
+                    txMsg[i]->data[3] = 0xFF;
+                    txMsg[i]->data[4] = 0xFF;
+                    txMsg[i]->data[5] = 0xFF;
+                    txMsg[i]->data[6] = 0xFF;
+                    txMsg[i]->data[7] = 0xFD;
+            }
+            printf("\n\rExiting motor mode \n\r");
             break;
 
         case 'm':
-            txMsg1.data[0] = 0xFF;
-            txMsg1.data[1] = 0xFF;
-            txMsg1.data[2] = 0xFF;
-            txMsg1.data[3] = 0xFF;
-            txMsg1.data[4] = 0xFF;
-            txMsg1.data[5] = 0xFF;
-            txMsg1.data[6] = 0xFF;
-            txMsg1.data[7] = 0xFC;
-            txMsg2.data[0] = 0xFF;
-            txMsg2.data[1] = 0xFF;
-            txMsg2.data[2] = 0xFF;
-            txMsg2.data[3] = 0xFF;
-            txMsg2.data[4] = 0xFF;
-            txMsg2.data[5] = 0xFF;
-            txMsg2.data[6] = 0xFF;
-            txMsg2.data[7] = 0xFC;
-            txMsg3.data[0] = 0xFF;
-            txMsg3.data[1] = 0xFF;
-            txMsg3.data[2] = 0xFF;
-            txMsg3.data[3] = 0xFF;
-            txMsg3.data[4] = 0xFF;
-            txMsg3.data[5] = 0xFF;
-            txMsg3.data[6] = 0xFF;
-            txMsg3.data[7] = 0xFC;
-            txMsg4.data[0] = 0xFF;
-            txMsg4.data[1] = 0xFF;
-            txMsg4.data[2] = 0xFF;
-            txMsg4.data[3] = 0xFF;
-            txMsg4.data[4] = 0xFF;
-            txMsg4.data[5] = 0xFF;
-            txMsg4.data[6] = 0xFF;
-            txMsg4.data[7] = 0xFC;
-            txMsg5.data[0] = 0xFF;
-            txMsg5.data[1] = 0xFF;
-            txMsg5.data[2] = 0xFF;
-            txMsg5.data[3] = 0xFF;
-            txMsg5.data[4] = 0xFF;
-            txMsg5.data[5] = 0xFF;
-            txMsg5.data[6] = 0xFF;
-            txMsg5.data[7] = 0xFC;
-            txMsg6.data[0] = 0xFF;
-            txMsg6.data[1] = 0xFF;
-            txMsg6.data[2] = 0xFF;
-            txMsg6.data[3] = 0xFF;
-            txMsg6.data[4] = 0xFF;
-            txMsg6.data[5] = 0xFF;
-            txMsg6.data[6] = 0xFF;
-            txMsg6.data[7] = 0xFC;
-            printf("\n\r Entering motor mode \n\r");
+            for (int i = 0; i < 6; i++) {
+                txMsg[i]->data[0] = 0xFF;
+                txMsg[i]->data[1] = 0xFF;
+                txMsg[i]->data[2] = 0xFF;
+                txMsg[i]->data[3] = 0xFF;
+                txMsg[i]->data[4] = 0xFF;
+                txMsg[i]->data[5] = 0xFF;
+                txMsg[i]->data[6] = 0xFF;
+                txMsg[i]->data[7] = 0xFC;
+            }
+            printf("\n\rEntering motor mode \n\r");
             break;
 
         case 'z':
-            txMsg1.data[0] = 0xFF;
-            txMsg1.data[1] = 0xFF;
-            txMsg1.data[2] = 0xFF;
-            txMsg1.data[3] = 0xFF;
-            txMsg1.data[4] = 0xFF;
-            txMsg1.data[5] = 0xFF;
-            txMsg1.data[6] = 0xFF;
-            txMsg1.data[7] = 0xFE;
-            txMsg2.data[0] = 0xFF;
-            txMsg2.data[1] = 0xFF;
-            txMsg2.data[2] = 0xFF;
-            txMsg2.data[3] = 0xFF;
-            txMsg2.data[4] = 0xFF;
-            txMsg2.data[5] = 0xFF;
-            txMsg2.data[6] = 0xFF;
-            txMsg2.data[7] = 0xFE;
-            txMsg3.data[0] = 0xFF;
-            txMsg3.data[1] = 0xFF;
-            txMsg3.data[2] = 0xFF;
-            txMsg3.data[3] = 0xFF;
-            txMsg3.data[4] = 0xFF;
-            txMsg3.data[5] = 0xFF;
-            txMsg3.data[6] = 0xFF;
-            txMsg3.data[7] = 0xFE;
-            txMsg4.data[0] = 0xFF;
-            txMsg4.data[1] = 0xFF;
-            txMsg4.data[2] = 0xFF;
-            txMsg4.data[3] = 0xFF;
-            txMsg4.data[4] = 0xFF;
-            txMsg4.data[5] = 0xFF;
-            txMsg4.data[6] = 0xFF;
-            txMsg4.data[7] = 0xFE;
-            txMsg5.data[0] = 0xFF;
-            txMsg5.data[1] = 0xFF;
-            txMsg5.data[2] = 0xFF;
-            txMsg5.data[3] = 0xFF;
-            txMsg5.data[4] = 0xFF;
-            txMsg5.data[5] = 0xFF;
-            txMsg5.data[6] = 0xFF;
-            txMsg5.data[7] = 0xFE;
-            txMsg6.data[0] = 0xFF;
-            txMsg6.data[1] = 0xFF;
-            txMsg6.data[2] = 0xFF;
-            txMsg6.data[3] = 0xFF;
-            txMsg6.data[4] = 0xFF;
-            txMsg6.data[5] = 0xFF;
-            txMsg6.data[6] = 0xFF;
-            txMsg6.data[7] = 0xFE;
-            printf("\n\r Set zero \n\r");
+            for (int i = 0; i < 6; i++) {
+                txMsg[i]->data[0] = 0xFF;
+                txMsg[i]->data[1] = 0xFF;
+                txMsg[i]->data[2] = 0xFF;
+                txMsg[i]->data[3] = 0xFF;
+                txMsg[i]->data[4] = 0xFF;
+                txMsg[i]->data[5] = 0xFF;
+                txMsg[i]->data[6] = 0xFF;
+                txMsg[i]->data[7] = 0xFE;
+            }
+            printf("\n\rSet zero \n\r");
             break;
 
         case '1':
             txMsg1.data[0] = 0x7F;
             txMsg1.data[1] = 0xFF;
             txMsg1.data[2] = 0x7F;
-            txMsg1.data[3] = 0xf0;
+            txMsg1.data[3] = 0xF0;
             txMsg1.data[4] = 0x00;
             txMsg1.data[5] = 0x00;
             txMsg1.data[6] = 0x07;
             txMsg1.data[7] = 0xFF;
-            printf("\n\r 1st motor rest position \n\r");
+            printf("\n\r1st motor rest position \n\r");
             break;
 
         case '2':
@@ -355,7 +240,7 @@ void command(void)
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
-            printf("\n\r 2nd motor rest position \n\r");            
+            printf("\n\r2nd motor rest position \n\r");            
             break;
 
         case '3':
@@ -367,7 +252,7 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
-            printf("\n\r 3rd motor rest position \n\r");
+            printf("\n\r3rd motor rest position \n\r");
             break;
 
         case '4':
@@ -379,7 +264,7 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
-            printf("\n\r 4th motor rest position \n\r");
+            printf("\n\r4th motor rest position \n\r");
             break;
 
         case '5':
@@ -391,7 +276,7 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
-            printf("\n\r 5th motor rest position \n\r");
+            printf("\n\r5th motor rest position \n\r");
             break;
 
         case '6':
@@ -403,7 +288,7 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
-            printf("\n\r 6th motor rest position \n\r");
+            printf("\n\r6th motor rest position \n\r");
             break;
 
         case 'r':
@@ -421,12 +306,12 @@ void command(void)
             break;
 
         case 'b':
-            pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg3, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -440,66 +325,28 @@ void command(void)
             return;
 
         case ' ':
-            pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg3, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-            pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
+            for (int i = 0; i < 6; i++) {
+                txMsg[i]->data[0] = 0xFF;
+                txMsg[i]->data[1] = 0xFF;
+                txMsg[i]->data[2] = 0xFF;
+                txMsg[i]->data[3] = 0xFF;
+                txMsg[i]->data[4] = 0xFF;
+                txMsg[i]->data[5] = 0xFF;
+                txMsg[i]->data[6] = 0xFF;
+                txMsg[i]->data[7] = 0xFD;
+            }
+            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
             can2.write(txMsg4);
             can2.write(txMsg5);
             can2.write(txMsg6);
-            txMsg1.data[0] = 0xFF;
-            txMsg1.data[1] = 0xFF;
-            txMsg1.data[2] = 0xFF;
-            txMsg1.data[3] = 0xFF;
-            txMsg1.data[4] = 0xFF;
-            txMsg1.data[5] = 0xFF;
-            txMsg1.data[6] = 0xFF;
-            txMsg1.data[7] = 0xFD;
-            txMsg2.data[0] = 0xFF;
-            txMsg2.data[1] = 0xFF;
-            txMsg2.data[2] = 0xFF;
-            txMsg2.data[3] = 0xFF;
-            txMsg2.data[4] = 0xFF;
-            txMsg2.data[5] = 0xFF;
-            txMsg2.data[6] = 0xFF;
-            txMsg2.data[7] = 0xFD;
-            txMsg3.data[0] = 0xFF;
-            txMsg3.data[1] = 0xFF;
-            txMsg3.data[2] = 0xFF;
-            txMsg3.data[3] = 0xFF;
-            txMsg3.data[4] = 0xFF;
-            txMsg3.data[5] = 0xFF;
-            txMsg3.data[6] = 0xFF;
-            txMsg3.data[7] = 0xFD;
-            txMsg4.data[0] = 0xFF;
-            txMsg4.data[1] = 0xFF;
-            txMsg4.data[2] = 0xFF;
-            txMsg4.data[3] = 0xFF;
-            txMsg4.data[4] = 0xFF;
-            txMsg4.data[5] = 0xFF;
-            txMsg4.data[6] = 0xFF;
-            txMsg4.data[7] = 0xFD;
-            txMsg5.data[0] = 0xFF;
-            txMsg5.data[1] = 0xFF;
-            txMsg5.data[2] = 0xFF;
-            txMsg5.data[3] = 0xFF;
-            txMsg5.data[4] = 0xFF;
-            txMsg5.data[5] = 0xFF;
-            txMsg5.data[6] = 0xFF;
-            txMsg5.data[7] = 0xFD;
-            txMsg6.data[0] = 0xFF;
-            txMsg6.data[1] = 0xFF;
-            txMsg6.data[2] = 0xFF;
-            txMsg6.data[3] = 0xFF;
-            txMsg6.data[4] = 0xFF;
-            txMsg6.data[5] = 0xFF;
-            txMsg6.data[6] = 0xFF;
-            txMsg6.data[7] = 0xFD;
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -546,12 +393,12 @@ int main(void)
     can2.attach(onMsgReceived2);
     can2.filter(CAN_ID<<21, 0xFFE00004, CANStandard, 0);
     sendCAN.attach(serial_isr, 0.01);     
-    pack_cmd(&txMsg1, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg2, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg3, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg4, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg5, 0, 0, 0, 0, 0);
-    pack_cmd(&txMsg6, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+    pack_cmd(txMsg6, 0, 0, 0, 0, 0);
     for (int i = 0; i < 6; i++) {
         theta[i] = 0.0f;
         omega[i] = 0.0f;
