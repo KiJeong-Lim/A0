@@ -144,8 +144,8 @@ bool operation(void)
 void serial_isr(void)
 {
     if (x > 0) {
-        const bool xpp = operation();
-        if (xpp)
+        const bool go_next = operation();
+        if (go_next)
             x++;
     }
 
@@ -160,8 +160,7 @@ void serial_isr(void)
         if ((obs + 1) % 20 == 0) {
             for (int i = 0; i < 6; i++) {
                 printf("\rtheta%d(%ld)=%f; omega%d(%ld)=%f;\n", i + 1, logger, theta[i], i + 1, logger, omega[i]);
-            }
-            printf("x = %ld\n", x);
+            };
             obs = 0;
             if (logger > 0)
                 logger++;
