@@ -115,18 +115,18 @@ bool operation(void)
     if (0 < x && x <= 99) {
         pack_cmd(txMsg1, 0, 0, 0, 0, 0);
         pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg3, -0.20, 0, 4, 3, 0);
+        pack_cmd(txMsg3, 0.20, 0, 4, 3, 0);
         pack_cmd(txMsg4, 0, 0, 0, 0, 0);
         pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg6, -0.20, 0, 4, 3, 0);  
+        pack_cmd(txMsg6, 0.20, 0, 4, 3, 0);  
         return true;
     }
     if (99 < x && x <= 199) {
-        pack_cmd(txMsg1, -0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg2, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(txMsg1, 0.1, 0, 18, 3.5, 0);
+        pack_cmd(txMsg2, 0.115, 0, 18, 3.5, 0);
         pack_cmd(txMsg3, 0, 0, 15, 3, 0);
-        pack_cmd(txMsg4, -0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg5, -0.115, 0, 18, 3.5, 0);
+        pack_cmd(txMsg4, 0.1, 0, 18, 3.5, 0);
+        pack_cmd(txMsg5, 0.115, 0, 18, 3.5, 0);
         pack_cmd(txMsg6, 0, 0, 15, 3, 0);    
         return true;
     }   
@@ -201,6 +201,18 @@ void command(void)
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFC;
             }
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5);
+            can2.write(txMsg6);
+            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
             printf("\n\rEntering motor mode\n\r");
             break;
 
@@ -321,7 +333,7 @@ void command(void)
             obs = -1;
             logger = 0;
             printf("\n\rBreak\n\r");
-            return;
+            break;
 
         case ' ':
             for (int i = 0; i < 6; i++) {
@@ -334,23 +346,23 @@ void command(void)
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFD;
             }
-            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
-            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
-            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
-            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
             can2.write(txMsg4);
             can2.write(txMsg5);
             can2.write(txMsg6);
+            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
             x = 0;
             obs = -1;
             logger = 0;
             printf("\n\rEmergency stop\n\r");
-            return;
+            break;
         }
     }
     can1.write(txMsg1);
@@ -396,6 +408,15 @@ int main(void)
         theta[i] = 0.0f;
         omega[i] = 0.0f;
     }
+    can1.write(txMsg1);
+    can1.write(txMsg2);
+    can1.write(txMsg3);
+    can2.write(txMsg4);
+    can2.write(txMsg5);
+    can2.write(txMsg6);
+    x = 0;
+    obs = -1;
+    logger = 0;
     timer.start();
     printf("\n\rINIT\n\r");
 }
