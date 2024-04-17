@@ -14,6 +14,16 @@
 #define T_MAX   (18.0f)
 #define I_MAX   (40.0f)
 
+static void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff);
+static void onMsgReceived1(void);
+static void onMsgReceived2(void);
+static bool operation(void);
+static void serial_isr(void);
+static void serial_isr(void);
+static void command(void);
+static bool pidInit(void);
+static bool pidExec(void);
+
 Serial      pc(PA_2, PA_3);
 
 CAN         can1(PB_8, PB_9);
@@ -58,7 +68,7 @@ void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, flo
     }
 }
 
-void onMsgReceived1(void)
+void onMsgReceived1()
 {
     can1.read(rxMsg1);
     int id = rxMsg1.data[0];
@@ -84,7 +94,7 @@ void onMsgReceived1(void)
     }
 }
 
-void onMsgReceived2(void)
+void onMsgReceived2()
 {
     can2.read(rxMsg2);
     int id = rxMsg2.data[0];
@@ -110,7 +120,7 @@ void onMsgReceived2(void)
     }
 }
 
-bool operation(void)
+bool operation()
 {
     if (0 < x && x <= 99) {
         pack_cmd(txMsg1, 0, 0, 0, 0, 0);
@@ -141,7 +151,7 @@ bool operation(void)
     return false;
 }
 
-void serial_isr(void)
+void serial_isr()
 {
     if (x > 0) {
         const bool go_next = operation();
@@ -171,12 +181,12 @@ void serial_isr(void)
     }
 }
 
-void command(void)
+void command()
 {
     while(pc.readable()) {
         const char c = pc.getc();
         switch (c) {
-        case 27:
+        case 27: // 27 == ESC
             for (int i = 0; i < 6; i++) {
                 txMsg[i]->data[0] = 0xFF;
                 txMsg[i]->data[1] = 0xFF;
@@ -222,7 +232,7 @@ void command(void)
             printf("\n\rEntering motor mode\n\r");
             break;
 
-        case 'z':
+        case 'z': // I don't know what it does
             for (int i = 0; i < 6; i++) {
                 txMsg[i]->data[0] = 0xFF;
                 txMsg[i]->data[1] = 0xFF;
@@ -264,7 +274,6 @@ void command(void)
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
-            
             can1.write(txMsg2);
             printf("\n\r2nd motor rest position\n\r");            
             break;
@@ -278,7 +287,6 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
-            
             can1.write(txMsg3);
             printf("\n\r3rd motor rest position\n\r");
             break;
@@ -292,7 +300,6 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
-        
             can2.write(txMsg4);
             printf("\n\r4th motor rest position\n\r");
             break;
@@ -306,7 +313,6 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
-            
             can2.write(txMsg5);
             printf("\n\r5th motor rest position\n\r");
             break;
@@ -320,7 +326,6 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
-            
             can2.write(txMsg6);
             printf("\n\r6th motor rest position\n\r");
             break;
@@ -333,7 +338,6 @@ void command(void)
 #endif
             obs = 0;
             logger = 1;
-
             printf("\n\rRun\n\r");
             break;
 
@@ -389,7 +393,6 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
-            
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -400,6 +403,16 @@ void command(void)
             break;
         }
     }
+}
+
+bool pidInit()
+{
+    // ...
+}
+
+bool pidExec()
+{
+    // ...
 }
 
 int main(void)
