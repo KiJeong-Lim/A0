@@ -22,7 +22,7 @@ static void onMsgReceived2(void);
 static bool operation(void);
 static void serial_isr(void);
 static void command(void);
-static bool pidInit(void);
+static void pidInit(void);
 
 Serial      pc(PA_2, PA_3);
 
@@ -146,6 +146,21 @@ void put_cmd(PutData &cmd, float p, float v, float kp, float kd, float t_ff)
     cmd.t_ff = t_ff;
 }
 
+void pidInit()
+{
+    bool okay = true;
+    for (int i = 0; i < 6; i++) {
+        okay &= pids[i].init();
+    }
+    if (!okay) {
+        printf("pid init fail...\n");
+    }
+    for (int i = 0; i < 6; i++) {
+        p_ctrls[i] = 0.0f;
+    }
+    pid_on = true;
+}
+
 bool operation()
 {
     if (x == -1) {
@@ -178,19 +193,6 @@ bool operation()
     put_cmd(reference[5], 0, 0, 0, 0, 0);
 #endif
     return false;
-}
-
-bool pidInit()
-{
-    bool res = true;
-    for (int i = 0; i < 6; i++) {
-        res &= pids[i].init();
-    }
-    for (int i = 0; i < 6; i++) {
-        p_ctrls[i] = 0.0f;
-    }
-    pid_on = true;
-    return res;
 }
 
 void serial_isr()
