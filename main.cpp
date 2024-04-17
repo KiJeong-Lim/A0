@@ -449,3 +449,8 @@ int main(void)
     timer.start();
     printf("\n\rINIT\n\r");
 }
+
+float getTime()
+{
+    return timer.read();
+}
