@@ -213,6 +213,12 @@ void command(void)
             pack_cmd(txMsg4, 0, 0, 0, 0, 0);
             pack_cmd(txMsg5, 0, 0, 0, 0, 0);
             pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5);
+            can2.write(txMsg6);
             printf("\n\rEntering motor mode\n\r");
             break;
 
@@ -227,6 +233,12 @@ void command(void)
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFE;
             }
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5);
+            can2.write(txMsg6);
             printf("\n\rSet zero\n\r");
             break;
 
@@ -239,6 +251,7 @@ void command(void)
             txMsg1.data[5] = 0x00;
             txMsg1.data[6] = 0x07;
             txMsg1.data[7] = 0xFF;
+            can1.write(txMsg1);
             printf("\n\r1st motor rest position\n\r");
             break;
 
@@ -251,6 +264,8 @@ void command(void)
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
+            
+            can1.write(txMsg2);
             printf("\n\r2nd motor rest position\n\r");            
             break;
 
@@ -263,6 +278,8 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
+            
+            can1.write(txMsg3);
             printf("\n\r3rd motor rest position\n\r");
             break;
 
@@ -275,6 +292,8 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
+        
+            can2.write(txMsg4);
             printf("\n\r4th motor rest position\n\r");
             break;
 
@@ -287,6 +306,8 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
+            
+            can2.write(txMsg5);
             printf("\n\r5th motor rest position\n\r");
             break;
 
@@ -299,13 +320,20 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
+            
+            can2.write(txMsg6);
             printf("\n\r6th motor rest position\n\r");
             break;
 
         case 'r':
+#if 0
             x = 1;
+#else
+            x = 0;
+#endif
             obs = 0;
             logger = 1;
+
             printf("\n\rRun\n\r");
             break;
 
@@ -361,16 +389,17 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
+            
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5); 
+            can2.write(txMsg6);
             printf("\n\rEmergency stop\n\r");
             break;
         }
     }
-    can1.write(txMsg1);
-    can1.write(txMsg2);
-    can1.write(txMsg3);
-    can2.write(txMsg4);
-    can2.write(txMsg5);
-    can2.write(txMsg6);
 }
 
 int main(void)
