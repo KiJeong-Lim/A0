@@ -15,14 +15,14 @@
 #define I_MAX   (40.0f)
 
 static void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff);
+static void pack_cmd(CANMessage &msg, const PutData &cmd);
+static void put_cmd(PutData &cmd, float p_des, float v_des, float kp, float kd, float t_ff);
 static void onMsgReceived1(void);
 static void onMsgReceived2(void);
 static bool operation(void);
 static void serial_isr(void);
-static void serial_isr(void);
 static void command(void);
 static bool pidInit(void);
-static bool pidExec(void);
 
 Serial      pc(PA_2, PA_3);
 
@@ -42,13 +42,25 @@ CANMessage  txMsg6;
 Timer       timer;
 Ticker      sendCAN;
 
-long int    x = 0;
-int         obs = -1;
-long int    logger = 0;
+long int    x       = 0;
+int         obs     = -1;
+long int    logger  = 0;
+bool        pid_on  = false;
 
 float theta[6], omega[6];
 
 CANMessage *txMsg[6] = { &txMsg1, &txMsg2, &txMsg3, &txMsg4, &txMsg5, &txMsg6, };
+PutData    reference[6], data_into_motor[6];
+float      p_ctrls[6];
+
+PIDController pids[6] = {
+    PIDController(0.0, 0.0, 0.0, &theta[0], &p_ctrls[0], &reference[0].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[1], &p_ctrls[1], &reference[1].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[2], &p_ctrls[2], &reference[2].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[3], &p_ctrls[3], &reference[3].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[4], &p_ctrls[4], &reference[4].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[5], &p_ctrls[5], &reference[5].p, -2.0, 2.0),
+};
 
 void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff)
 {
@@ -66,6 +78,11 @@ void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, flo
     for (int i = 0; i < 8; i++) {
         msg.data[i] = pack.data[i];
     }
+}
+
+void pack_cmd(CANMessage &msg, const PutData &cmd)
+{
+    pack_cmd(msg, cmd.p, cmd.v, cmd.kp, cmd.kd, cmd.t_ff);
 }
 
 void onMsgReceived1()
@@ -120,35 +137,60 @@ void onMsgReceived2()
     }
 }
 
+void put_cmd(PutData &cmd, float p, float v, float kp, float kd, float t_ff)
+{
+    cmd.p = p;
+    cmd.v = v;
+    cmd.kp = kp;
+    cmd.kd = kd;
+    cmd.t_ff = t_ff;
+}
+
 bool operation()
 {
+    if (x == -1) {
+        pidInit();
+    }
     if (0 < x && x <= 99) {
-        pack_cmd(txMsg1, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg3, 0.20, 0, 4, 3, 0);
-        pack_cmd(txMsg4, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg6, 0.20, 0, 4, 3, 0);  
+        put_cmd(reference[0], 0, 0, 0, 0, 0);
+        put_cmd(reference[1], 0, 0, 0, 0, 0);
+        put_cmd(reference[2], 0.20, 0, 4, 3, 0);
+        put_cmd(reference[3], 0, 0, 0, 0, 0);
+        put_cmd(reference[4], 0, 0, 0, 0, 0);
+        put_cmd(reference[5], 0.20, 0, 4, 3, 0);  
         return true;
     }
     if (99 < x && x <= 199) {
-        pack_cmd(txMsg1, 0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg2, 0.115, 0, 18, 3.5, 0);
-        pack_cmd(txMsg3, 0, 0, 15, 3, 0);
-        pack_cmd(txMsg4, 0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg5, 0.115, 0, 18, 3.5, 0);
-        pack_cmd(txMsg6, 0, 0, 15, 3, 0);    
+        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.115, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.115, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0, 0, 15, 3, 0);    
         return true;
     }   
 #if 0
-    pack_cmd(txMsg1, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg3, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg4, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+    put_cmd(reference[0], 0, 0, 0, 0, 0);
+    put_cmd(reference[1], 0, 0, 0, 0, 0);
+    put_cmd(reference[2], 0, 0, 0, 0, 0);
+    put_cmd(reference[3], 0, 0, 0, 0, 0);
+    put_cmd(reference[4], 0, 0, 0, 0, 0);
+    put_cmd(reference[5], 0, 0, 0, 0, 0);
 #endif
     return false;
+}
+
+bool pidInit()
+{
+    bool res = true;
+    for (int i = 0; i < 6; i++) {
+        res &= pids[i].init();
+    }
+    for (int i = 0; i < 6; i++) {
+        p_ctrls[i] = 0.0f;
+    }
+    pid_on = true;
+    return res;
 }
 
 void serial_isr()
@@ -157,6 +199,20 @@ void serial_isr()
         const bool go_next = operation();
         if (go_next)
             x++;
+        for (int i = 0; i < 6; i++) {
+            data_into_motor[i] = reference[i];
+        }
+        if (pid_on) {
+            for (int i = 0; i < 6; i++) {
+                pids[i].compute();
+            }
+            for (int i = 0; i < 6; i++) {
+                data_into_motor[i].p = p_ctrls[i];
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            pack_cmd(*txMsg[i], data_into_motor[i]);
+        }
     }
 
     can1.write(txMsg1);
@@ -403,16 +459,6 @@ void command()
             break;
         }
     }
-}
-
-bool pidInit()
-{
-    // ...
-}
-
-bool pidExec()
-{
-    // ...
 }
 
 int main(void)

@@ -6,6 +6,7 @@
 
 #define PI 3.14159265359f
 #define CAN_ID 0x01
+#define USE_PID true
 
 float fmaxf(float x, float y);
 float fminf(float x, float y);
@@ -42,6 +43,14 @@ public:
     Real_t get_last_time(void) const;
     Real_t get_last_error(void) const;
     Real_t get_error_sum(void) const;
+};
+
+struct PutData {
+    float p;
+    float v;
+    float kp;
+    float kd;
+    float t_ff;
 };
 
 #endif
