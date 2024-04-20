@@ -330,10 +330,6 @@ void command()
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
-<<<<<<< HEAD
-            
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg2);
             printf("\n\r2nd motor rest position\n\r");            
             break;
@@ -347,10 +343,6 @@ void command()
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
-<<<<<<< HEAD
-            
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg3);
             printf("\n\r3rd motor rest position\n\r");
             break;
@@ -364,10 +356,6 @@ void command()
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
-<<<<<<< HEAD
-        
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg4);
             printf("\n\r4th motor rest position\n\r");
             break;
@@ -381,10 +369,6 @@ void command()
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
-<<<<<<< HEAD
-            
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg5);
             printf("\n\r5th motor rest position\n\r");
             break;
@@ -398,10 +382,6 @@ void command()
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
-<<<<<<< HEAD
-            
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg6);
             printf("\n\r6th motor rest position\n\r");
             break;
@@ -470,10 +450,6 @@ void command()
             x = 0;
             obs = -1;
             logger = 0;
-<<<<<<< HEAD
-            
-=======
->>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
