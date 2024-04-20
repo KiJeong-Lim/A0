@@ -14,6 +14,16 @@
 #define T_MAX   (18.0f)
 #define I_MAX   (40.0f)
 
+static void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff);
+static void pack_cmd(CANMessage &msg, const PutData &cmd);
+static void put_cmd(PutData &cmd, float p_des, float v_des, float kp, float kd, float t_ff);
+static void onMsgReceived1(void);
+static void onMsgReceived2(void);
+static bool operation(void);
+static void serial_isr(void);
+static void command(void);
+static bool pidInit(void);
+
 Serial      pc(PA_2, PA_3);
 
 CAN         can1(PB_8, PB_9);
@@ -32,13 +42,25 @@ CANMessage  txMsg6;
 Timer       timer;
 Ticker      sendCAN;
 
-long int    x = 0;
-int         obs = -1;
-long int    logger = 0;
+long int    x       = 0;
+int         obs     = -1;
+long int    logger  = 0;
+bool        pid_on  = false;
 
 float theta[6], omega[6];
 
 CANMessage *txMsg[6] = { &txMsg1, &txMsg2, &txMsg3, &txMsg4, &txMsg5, &txMsg6, };
+PutData    reference[6], data_into_motor[6];
+float      p_ctrls[6];
+
+PIDController pids[6] = {
+    PIDController(0.0, 0.0, 0.0, &theta[0], &p_ctrls[0], &reference[0].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[1], &p_ctrls[1], &reference[1].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[2], &p_ctrls[2], &reference[2].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[3], &p_ctrls[3], &reference[3].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[4], &p_ctrls[4], &reference[4].p, -2.0, 2.0),
+    PIDController(0.0, 0.0, 0.0, &theta[5], &p_ctrls[5], &reference[5].p, -2.0, 2.0),
+};
 
 void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff)
 {
@@ -58,7 +80,12 @@ void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, flo
     }
 }
 
-void onMsgReceived1(void)
+void pack_cmd(CANMessage &msg, const PutData &cmd)
+{
+    pack_cmd(msg, cmd.p, cmd.v, cmd.kp, cmd.kd, cmd.t_ff);
+}
+
+void onMsgReceived1()
 {
     can1.read(rxMsg1);
     int id = rxMsg1.data[0];
@@ -84,7 +111,7 @@ void onMsgReceived1(void)
     }
 }
 
-void onMsgReceived2(void)
+void onMsgReceived2()
 {
     can2.read(rxMsg2);
     int id = rxMsg2.data[0];
@@ -110,43 +137,82 @@ void onMsgReceived2(void)
     }
 }
 
-bool operation(void)
+void put_cmd(PutData &cmd, float p, float v, float kp, float kd, float t_ff)
 {
+    cmd.p = p;
+    cmd.v = v;
+    cmd.kp = kp;
+    cmd.kd = kd;
+    cmd.t_ff = t_ff;
+}
+
+bool operation()
+{
+    if (x == -1) {
+        pidInit();
+    }
     if (0 < x && x <= 99) {
-        pack_cmd(txMsg1, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg3, 0.20, 0, 4, 3, 0);
-        pack_cmd(txMsg4, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-        pack_cmd(txMsg6, 0.20, 0, 4, 3, 0);  
+        put_cmd(reference[0], 0, 0, 0, 0, 0);
+        put_cmd(reference[1], 0, 0, 0, 0, 0);
+        put_cmd(reference[2], 0.20, 0, 4, 3, 0);
+        put_cmd(reference[3], 0, 0, 0, 0, 0);
+        put_cmd(reference[4], 0, 0, 0, 0, 0);
+        put_cmd(reference[5], 0.20, 0, 4, 3, 0);  
         return true;
     }
     if (99 < x && x <= 199) {
-        pack_cmd(txMsg1, 0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg2, 0.115, 0, 18, 3.5, 0);
-        pack_cmd(txMsg3, 0, 0, 15, 3, 0);
-        pack_cmd(txMsg4, 0.1, 0, 18, 3.5, 0);
-        pack_cmd(txMsg5, 0.115, 0, 18, 3.5, 0);
-        pack_cmd(txMsg6, 0, 0, 15, 3, 0);    
+        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.115, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.115, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0, 0, 15, 3, 0);    
         return true;
     }   
 #if 0
-    pack_cmd(txMsg1, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg2, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg3, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg4, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg5, 0, 0, 0, 0, 0);
-    pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+    put_cmd(reference[0], 0, 0, 0, 0, 0);
+    put_cmd(reference[1], 0, 0, 0, 0, 0);
+    put_cmd(reference[2], 0, 0, 0, 0, 0);
+    put_cmd(reference[3], 0, 0, 0, 0, 0);
+    put_cmd(reference[4], 0, 0, 0, 0, 0);
+    put_cmd(reference[5], 0, 0, 0, 0, 0);
 #endif
     return false;
 }
 
-void serial_isr(void)
+bool pidInit()
+{
+    bool res = true;
+    for (int i = 0; i < 6; i++) {
+        res &= pids[i].init();
+    }
+    for (int i = 0; i < 6; i++) {
+        p_ctrls[i] = 0.0f;
+    }
+    pid_on = true;
+    return res;
+}
+
+void serial_isr()
 {
     if (x > 0) {
         const bool go_next = operation();
         if (go_next)
             x++;
+        for (int i = 0; i < 6; i++) {
+            data_into_motor[i] = reference[i];
+        }
+        if (pid_on) {
+            for (int i = 0; i < 6; i++) {
+                pids[i].compute();
+            }
+            for (int i = 0; i < 6; i++) {
+                data_into_motor[i].p = p_ctrls[i];
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            pack_cmd(*txMsg[i], data_into_motor[i]);
+        }
     }
 
     can1.write(txMsg1);
@@ -171,12 +237,12 @@ void serial_isr(void)
     }
 }
 
-void command(void)
+void command()
 {
     while(pc.readable()) {
         const char c = pc.getc();
         switch (c) {
-        case 27:
+        case 27: // 27 == ESC
             for (int i = 0; i < 6; i++) {
                 txMsg[i]->data[0] = 0xFF;
                 txMsg[i]->data[1] = 0xFF;
@@ -222,7 +288,7 @@ void command(void)
             printf("\n\rEntering motor mode\n\r");
             break;
 
-        case 'z':
+        case 'z': // I don't know what it does
             for (int i = 0; i < 6; i++) {
                 txMsg[i]->data[0] = 0xFF;
                 txMsg[i]->data[1] = 0xFF;
@@ -264,7 +330,10 @@ void command(void)
             txMsg2.data[5] = 0x00;
             txMsg2.data[6] = 0x07;
             txMsg2.data[7] = 0xFF;
+<<<<<<< HEAD
             
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg2);
             printf("\n\r2nd motor rest position\n\r");            
             break;
@@ -278,7 +347,10 @@ void command(void)
             txMsg3.data[5] = 0x00;
             txMsg3.data[6] = 0x07;
             txMsg3.data[7] = 0xFF;
+<<<<<<< HEAD
             
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg3);
             printf("\n\r3rd motor rest position\n\r");
             break;
@@ -292,7 +364,10 @@ void command(void)
             txMsg4.data[5] = 0x00;
             txMsg4.data[6] = 0x07;
             txMsg4.data[7] = 0xFF;
+<<<<<<< HEAD
         
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg4);
             printf("\n\r4th motor rest position\n\r");
             break;
@@ -306,7 +381,10 @@ void command(void)
             txMsg5.data[5] = 0x00;
             txMsg5.data[6] = 0x07;
             txMsg5.data[7] = 0xFF;
+<<<<<<< HEAD
             
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg5);
             printf("\n\r5th motor rest position\n\r");
             break;
@@ -320,7 +398,10 @@ void command(void)
             txMsg6.data[5] = 0x00;
             txMsg6.data[6] = 0x07;
             txMsg6.data[7] = 0xFF;
+<<<<<<< HEAD
             
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can2.write(txMsg6);
             printf("\n\r6th motor rest position\n\r");
             break;
@@ -389,7 +470,10 @@ void command(void)
             x = 0;
             obs = -1;
             logger = 0;
+<<<<<<< HEAD
             
+=======
+>>>>>>> d829a68a3cc44b41bb7b5e297a1589ca6cf618ad
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -448,4 +532,9 @@ int main(void)
     logger = 0;
     timer.start();
     printf("\n\rINIT\n\r");
+}
+
+float getTime()
+{
+    return timer.read();
 }
