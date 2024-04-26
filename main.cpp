@@ -54,12 +54,12 @@ PutData    reference[6], data_into_motor[6];
 float      p_ctrls[6];
 
 PIDController pids[6] = {
-    PIDController(0.0, 0.0, 0.0, &theta[0], &p_ctrls[0], &reference[0].p, -2.0, 2.0),
+    PIDController(1.3, 0.1, 0.1, &theta[0], &p_ctrls[0], &reference[0].p, -2.0, 2.0),
     PIDController(0.0, 0.0, 0.0, &theta[1], &p_ctrls[1], &reference[1].p, -2.0, 2.0),
-    PIDController(0.0, 0.0, 0.0, &theta[2], &p_ctrls[2], &reference[2].p, -2.0, 2.0),
-    PIDController(0.0, 0.0, 0.0, &theta[3], &p_ctrls[3], &reference[3].p, -2.0, 2.0),
+    PIDController(2.0, 1.0, 0.6, &theta[2], &p_ctrls[2], &reference[2].p, -2.0, 2.0),
+    PIDController(1.3, 0.1, 0.1, &theta[3], &p_ctrls[3], &reference[3].p, -2.0, 2.0),
     PIDController(0.0, 0.0, 0.0, &theta[4], &p_ctrls[4], &reference[4].p, -2.0, 2.0),
-    PIDController(0.0, 0.0, 0.0, &theta[5], &p_ctrls[5], &reference[5].p, -2.0, 2.0),
+    PIDController(2.0, 1.0, 0.6, &theta[5], &p_ctrls[5], &reference[5].p, -2.0, 2.0),
 };
 
 void pack_cmd(CANMessage &msg, float p_des, float v_des, float kp, float kd, float t_ff)
@@ -166,16 +166,16 @@ bool operation()
     if (x == -1) {
         pidInit();
     }
-    if (0 < x && x <= 99) {
+    if (x <= 99) {
         put_cmd(reference[0], 0, 0, 0, 0, 0);
         put_cmd(reference[1], 0, 0, 0, 0, 0);
-        put_cmd(reference[2], 0.20, 0, 4, 3, 0);
+        put_cmd(reference[2], 0.20, 0, 5, 3, 0);
         put_cmd(reference[3], 0, 0, 0, 0, 0);
         put_cmd(reference[4], 0, 0, 0, 0, 0);
-        put_cmd(reference[5], 0.20, 0, 4, 3, 0);  
+        put_cmd(reference[5], 0.20, 0, 5, 3, 0);  
         return true;
     }
-    if (99 < x && x <= 199) {
+    if (x <= 199) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.115, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0, 0, 15, 3, 0);
@@ -183,7 +183,16 @@ bool operation()
         put_cmd(reference[4], 0.115, 0, 18, 3.5, 0);
         put_cmd(reference[5], 0, 0, 15, 3, 0);    
         return true;
-    }   
+    }
+    if (x <= 249) {
+        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.12, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0, 0, 15, 3, 0);    
+        return true;
+    }
 #if 0
     put_cmd(reference[0], 0, 0, 0, 0, 0);
     put_cmd(reference[1], 0, 0, 0, 0, 0);
@@ -215,6 +224,14 @@ void serial_isr()
         for (int i = 0; i < 6; i++) {
             pack_cmd(*txMsg[i], data_into_motor[i]);
         }
+    }
+    else {
+        pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+        pack_cmd(txMsg6, 0, 0, 0, 0, 0);
     }
 
     can1.write(txMsg1);
@@ -255,6 +272,30 @@ void command()
                 txMsg[i]->data[6] = 0xFF;
                 txMsg[i]->data[7] = 0xFD;
             }
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5);
+            can2.write(txMsg6);
+            put_cmd(reference[0], 0, 0, 0, 0, 0);
+            put_cmd(reference[1], 0, 0, 0, 0, 0);
+            put_cmd(reference[2], 0, 0, 0, 0, 0);
+            put_cmd(reference[3], 0, 0, 0, 0, 0);
+            put_cmd(reference[4], 0, 0, 0, 0, 0);
+            put_cmd(reference[5], 0, 0, 0, 0, 0);
+            pack_cmd(txMsg1, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg2, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg3, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg4, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg5, 0, 0, 0, 0, 0);
+            pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+            can1.write(txMsg1);
+            can1.write(txMsg2);
+            can1.write(txMsg3);
+            can2.write(txMsg4);
+            can2.write(txMsg5);
+            can2.write(txMsg6);
             printf("\n\rExiting motor mode\n\r");
             break;
 
@@ -281,6 +322,12 @@ void command()
             pack_cmd(txMsg4, 0, 0, 0, 0, 0);
             pack_cmd(txMsg5, 0, 0, 0, 0, 0);
             pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+            put_cmd(reference[0], 0, 0, 0, 0, 0);
+            put_cmd(reference[1], 0, 0, 0, 0, 0);
+            put_cmd(reference[2], 0, 0, 0, 0, 0);
+            put_cmd(reference[3], 0, 0, 0, 0, 0);
+            put_cmd(reference[4], 0, 0, 0, 0, 0);
+            put_cmd(reference[5], 0, 0, 0, 0, 0);
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -389,11 +436,7 @@ void command()
             break;
 
         case 'r':
-#if 0
             x = 1;
-#else
-            x = 0;
-#endif
             obs = 0;
             logger = 1;
             printf("\n\rRun\n\r");
@@ -413,6 +456,12 @@ void command()
             pack_cmd(txMsg4, 0, 0, 0, 0, 0);
             pack_cmd(txMsg5, 0, 0, 0, 0, 0);
             pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+            put_cmd(reference[0], 0, 0, 0, 0, 0);
+            put_cmd(reference[1], 0, 0, 0, 0, 0);
+            put_cmd(reference[2], 0, 0, 0, 0, 0);
+            put_cmd(reference[3], 0, 0, 0, 0, 0);
+            put_cmd(reference[4], 0, 0, 0, 0, 0);
+            put_cmd(reference[5], 0, 0, 0, 0, 0);
             can1.write(txMsg1);
             can1.write(txMsg2);
             can1.write(txMsg3);
@@ -448,6 +497,12 @@ void command()
             pack_cmd(txMsg4, 0, 0, 0, 0, 0);
             pack_cmd(txMsg5, 0, 0, 0, 0, 0);
             pack_cmd(txMsg6, 0, 0, 0, 0, 0);
+            put_cmd(reference[0], 0, 0, 0, 0, 0);
+            put_cmd(reference[1], 0, 0, 0, 0, 0);
+            put_cmd(reference[2], 0, 0, 0, 0, 0);
+            put_cmd(reference[3], 0, 0, 0, 0, 0);
+            put_cmd(reference[4], 0, 0, 0, 0, 0);
+            put_cmd(reference[5], 0, 0, 0, 0, 0);
             x = 0;
             obs = -1;
             logger = 0;
