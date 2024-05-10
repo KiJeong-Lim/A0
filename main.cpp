@@ -43,6 +43,7 @@ Timer       timer;
 Ticker      sendCAN;
 
 long int    x       = 0;
+long int    y       = 0;
 int         obs     = -1;
 long int    logger  = 0;
 bool        pid_on  = false;
@@ -169,39 +170,54 @@ bool operation()
     if (x <= 99) {
         put_cmd(reference[0], 0, 0, 0, 0, 0);
         put_cmd(reference[1], 0, 0, 0, 0, 0);
-        put_cmd(reference[2], 0.20, 0, 5, 3, 0);
+        put_cmd(reference[2], 0.20, 0, 6, 3, 0);
         put_cmd(reference[3], 0, 0, 0, 0, 0);
         put_cmd(reference[4], 0, 0, 0, 0, 0);
-        put_cmd(reference[5], 0.20, 0, 5, 3, 0);  
+        put_cmd(reference[5], 0.20, 0, 6, 3, 0);  
         return true;
     }
+
     if (x <= 199) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.115, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0, 0, 15, 3, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
         put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
         put_cmd(reference[4], 0.115, 0, 18, 3.5, 0);
-        put_cmd(reference[5], 0, 0, 15, 3, 0);    
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         return true;
     }
-    if (x <= 249) {
+
+    if (x <= 259) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.12, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.06, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.06, 0, 15, 3, 0);    
+        return true;
+    }
+
+    if (x <= 319) {
+        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.15, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0, 0, 15, 3, 0);
         put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.12, 0, 18, 3.5, 0);
-        put_cmd(reference[5], 0, 0, 15, 3, 0);    
-        return true;
+        put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
+        put_cmd(reference[5], 0, 0, 15, 3, 0);
+        return true; 
     }
-#if 0
-    put_cmd(reference[0], 0, 0, 0, 0, 0);
-    put_cmd(reference[1], 0, 0, 0, 0, 0);
-    put_cmd(reference[2], 0, 0, 0, 0, 0);
-    put_cmd(reference[3], 0, 0, 0, 0, 0);
-    put_cmd(reference[4], 0, 0, 0, 0, 0);
-    put_cmd(reference[5], 0, 0, 0, 0, 0);
-#endif
-    return false;
+
+    if (y <= 0)
+        return false;
+
+    if (y <= 100) {
+        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.15, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
+        put_cmd(reference[5], 0, 0, 15, 3, 0);
+    }
 }
 
 void serial_isr()
@@ -442,8 +458,15 @@ void command()
             printf("\n\rRun\n\r");
             break;
 
+        case 't':
+            y = 1;
+            logger = 1;
+            printf("\n\rRun2\n\r");
+            break;
+
         case 'o':
             x = 0;
+            y = 0;
             obs = 0;
             logger = 0;
             printf("\n\rObserve\n\r");
@@ -469,6 +492,7 @@ void command()
             can2.write(txMsg5);
             can2.write(txMsg6);
             x = 0;
+            y = 0;
             obs = -1;
             logger = 0;
             printf("\n\rBreak\n\r");
@@ -504,6 +528,7 @@ void command()
             put_cmd(reference[4], 0, 0, 0, 0, 0);
             put_cmd(reference[5], 0, 0, 0, 0, 0);
             x = 0;
+            y = 0;
             obs = -1;
             logger = 0;
             can1.write(txMsg1);
@@ -560,6 +585,7 @@ int main(void)
     can2.write(txMsg5);
     can2.write(txMsg6);
     x = 0;
+    y = 0;
     obs = -1;
     logger = 0;
     timer.start();
