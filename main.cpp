@@ -167,6 +167,7 @@ bool operation()
     if (x == -1) {
         pidInit();
     }
+
     if (x <= 99) {
         put_cmd(reference[0], 0, 0, 0, 0, 0);
         put_cmd(reference[1], 0, 0, 0, 0, 0);
@@ -207,7 +208,10 @@ bool operation()
         return true; 
     }
 
-    const bool x_fixed = false; // because y value varies, but not x value
+    if (y <= 0)
+        return false;
+
+    const bool x_fixed = true; // because y value varies, but not x value
 
     if (y <= 100) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
@@ -219,7 +223,7 @@ bool operation()
         y++;
     }
 
-    return x_fixed;
+    return !x_fixed;
 }
 
 void serial_isr()
@@ -263,7 +267,7 @@ void serial_isr()
         if ((obs + 1) % 20 == 0) {
             for (int i = 0; i < 6; i++) {
                 printf("\rtheta%d(%ld)=%f; omega%d(%ld)=%f;\n", i + 1, logger, theta[i], i + 1, logger, omega[i]);
-            };
+            }
             obs = 0;
             if (logger > 0)
                 logger++;
