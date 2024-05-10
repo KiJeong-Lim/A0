@@ -455,6 +455,7 @@ void command()
             x = 1;
             obs = 0;
             logger = 1;
+
             printf("\n\rRun\n\r");
             break;
 
