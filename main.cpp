@@ -207,7 +207,7 @@ bool operation()
         return true; 
     }
 
-    const int x_fixed = false; // because y value varies, but not x value
+    const bool x_fixed = false; // because y value varies, but not x value
 
     if (y <= 100) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
