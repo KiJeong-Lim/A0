@@ -207,8 +207,7 @@ bool operation()
         return true; 
     }
 
-    if (y <= 0)
-        return false;
+    const int x_fixed = false; // because y value varies, but not x value
 
     if (y <= 100) {
         put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
@@ -217,7 +216,10 @@ bool operation()
         put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
         put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
         put_cmd(reference[5], 0, 0, 15, 3, 0);
+        y++;
     }
+
+    return x_fixed;
 }
 
 void serial_isr()
