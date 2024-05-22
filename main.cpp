@@ -189,7 +189,7 @@ bool operation()
     }
 
     if (x <= 259) {
-        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[0], 0.12, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0.06, 0, 15, 3, 0);
         put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
@@ -198,39 +198,30 @@ bool operation()
         return true;
     }
 
-    if (x <= 319) {
-        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.15, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
-        put_cmd(reference[5], 0, 0, 15, 3, 0);
-        return true; 
-    }
-
-    if (y <= 0)
-        return false;
-
-    if (y <= 100) {
-        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.15, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
-        put_cmd(reference[5], 0, 0, 15, 3, 0);
-        y++;
+    if (y <= 0) {
         return false;
     }
 
-    if (y <= 150) {
-        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.15, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0, 0, 15, 3, 0);
+    if (y <= 19) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.10, 0, 15, 3, 0);
         put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.025, 0, 18, 3.5, -2);
-        put_cmd(reference[5], 0, 0, 15, 3, 0);
+        put_cmd(reference[4], 0.02, 0, 18, 3.5, -1);
+        put_cmd(reference[5], 0.10, 0, 15, 3, -1);
         y++;
-        return false;
+        return true;
+    }
+
+    if (y <= 20) {
+        put_cmd(reference[0], 0.18, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.12, 0, 15, 3, -1);
+        y++;
+        return true;
     }
 }
 
@@ -469,7 +460,6 @@ void command()
             x = 1;
             obs = 0;
             logger = 1;
-
             printf("\n\rRun\n\r");
             break;
 
