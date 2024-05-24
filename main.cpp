@@ -44,6 +44,7 @@ Ticker      sendCAN;
 
 long int    x       = 0;
 long int    y       = 0;
+long int    z       = 0;
 int         obs     = -1;
 long int    logger  = 0;
 bool        pid_on  = false;
@@ -210,10 +211,10 @@ bool operation()
         put_cmd(reference[4], 0.02, 0, 18, 3.5, -1);
         put_cmd(reference[5], 0.10, 0, 15, 3, -1);
         y++;
-        return true;
+        return false;
     }
 
-    if (y <= 20) {
+    if (y <= 39) {
         put_cmd(reference[0], 0.18, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0.12, 0, 15, 3, 0);
@@ -221,8 +222,36 @@ bool operation()
         put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[5], 0.12, 0, 15, 3, -1);
         y++;
-        return true;
+        return false;
     }
+
+    if (z <= 0) {
+        return false;
+    }
+
+    if (z <= 19) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, -1);
+        put_cmd(reference[1], 0.02, 0, 18, 3.5, -1);
+        put_cmd(reference[2], 0.20, 0, 15, 3, -1);
+        put_cmd(reference[3], 0.22, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.10, 0, 15, 3, 0);
+        z++;    
+        return false;
+    }
+
+    if (z <= 39) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, -1);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.18, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.12, 0, 15, 3, 0);
+        z++;
+        return false;
+    }
+
+    return false;
 }
 
 void serial_isr()
@@ -460,7 +489,7 @@ void command()
             x = 1;
             obs = 0;
             logger = 1;
-            printf("\n\rRun\n\r");
+            printf("\n\rRun1\n\r");
             break;
 
         case 't':
@@ -469,9 +498,16 @@ void command()
             printf("\n\rRun2\n\r");
             break;
 
+        case 'y':
+            z = 1;
+            logger = 1;
+            printf("\n\rRun3\n\r");
+            break;
+
         case 'o':
             x = 0;
             y = 0;
+            z = 0;
             obs = 0;
             logger = 0;
             printf("\n\rObserve\n\r");
@@ -498,6 +534,7 @@ void command()
             can2.write(txMsg6);
             x = 0;
             y = 0;
+            z = 0;
             obs = -1;
             logger = 0;
             printf("\n\rBreak\n\r");
@@ -534,6 +571,7 @@ void command()
             put_cmd(reference[5], 0, 0, 0, 0, 0);
             x = 0;
             y = 0;
+            z = 0;
             obs = -1;
             logger = 0;
             can1.write(txMsg1);
@@ -591,6 +629,7 @@ int main(void)
     can2.write(txMsg6);
     x = 0;
     y = 0;
+    z = 0;
     obs = -1;
     logger = 0;
     timer.start();
