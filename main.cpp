@@ -180,22 +180,22 @@ bool operation()
     }
 
     if (x <= 199) {
-        put_cmd(reference[0], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[0], 0.10, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.115, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0.04, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[3], 0.10, 0, 18, 3.5, 0);
         put_cmd(reference[4], 0.115, 0, 18, 3.5, 0);
         put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         return true;
     }
 
     if (x <= 259) {
-        put_cmd(reference[0], 0.12, 0, 18, 3.5, 0);
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0.06, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[5], 0.06, 0, 15, 3, 0);    
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         return true;
     }
 
@@ -204,31 +204,32 @@ bool operation()
     }
 
     if (y <= 19) {
-        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0.10, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.02, 0, 18, 3.5, -1);
-        put_cmd(reference[5], 0.10, 0, 15, 3, -1);
+        put_cmd(reference[0], 0.12, 2.0, 18, 3.5, 2);
+        put_cmd(reference[1], 0.115, 0.0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.10, 0.0, 15, 3, 2);
+        put_cmd(reference[3], 0.06, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.12, -2.0, 18, 3.5, -1);
+        put_cmd(reference[5], 0.10, 0, 15, 3, -2);
         y++;
         return false;
     }
 
     if (y <= 39) {
-        put_cmd(reference[0], 0.18, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
         put_cmd(reference[2], 0.12, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.1, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.14, 1, 18, 3.5, 3);
         put_cmd(reference[5], 0.12, 0, 15, 3, -1);
         y++;
         return false;
     }
-
+    
     if (z <= 0) {
         return false;
     }
 
+#if 0
     if (z <= 19) {
         put_cmd(reference[0], 0.14, 0, 18, 3.5, -1);
         put_cmd(reference[1], 0.02, 0, 18, 3.5, -1);
@@ -250,6 +251,7 @@ bool operation()
         z++;
         return false;
     }
+#endif
 
     return false;
 }
