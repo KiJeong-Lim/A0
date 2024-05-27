@@ -160,7 +160,8 @@ void pidInit()
     for (int i = 0; i < 6; i++) {
         p_ctrls[i] = 0.0f;
     }
-    pid_on = true;
+    if (okay)
+        pid_on = true;
 }
 
 bool operation()
