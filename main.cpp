@@ -225,6 +225,28 @@ bool operation()
         return false;
     }
     
+    if (y <= 59) {
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.14, 1, 18, 3.5, 3);
+        put_cmd(reference[5], 0.12, 0, 15, 3, -1);
+        y++;
+        return false;
+    }
+
+    if (y <= 79) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        y++;
+        return false;
+    }
+    
     if (z <= 0) {
         return false;
     }
