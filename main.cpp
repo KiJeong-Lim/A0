@@ -246,35 +246,79 @@ bool operation()
         put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         y++;
         return false;
+        
     }
-    
+
+    if (y <= 99) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.15, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        y++;
+        return false;
+
+    }
     if (z <= 0) {
         return false;
     }
 
-#if 0
+
     if (z <= 19) {
-        put_cmd(reference[0], 0.14, 0, 18, 3.5, -1);
-        put_cmd(reference[1], 0.02, 0, 18, 3.5, -1);
-        put_cmd(reference[2], 0.20, 0, 15, 3, -1);
-        put_cmd(reference[3], 0.22, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[5], 0.10, 0, 15, 3, 0);
-        z++;    
+        put_cmd(reference[0], 0.06, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.08, -2.0, 18, 3.5, -1);
+        put_cmd(reference[2], 0.10, 0, 15, 3, -2);
+        put_cmd(reference[3], 0.12, 2.0, 18, 3.5, 2);
+        put_cmd(reference[4], 0.115, 0.0, 18, 3.5, 3.5);
+        put_cmd(reference[5], 0.10, 0.0, 15, 3, 2);
+        z++;
         return false;
     }
 
     if (z <= 39) {
-        put_cmd(reference[0], 0.14, 0, 18, 3.5, -1);
-        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.18, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[1], 0.14, 1, 18, 3.5, 3);
+        put_cmd(reference[2], 0.13, 0, 15, 3, -1);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[4], 0.12, 0, 18, 3.5, 3.5);
         put_cmd(reference[5], 0.12, 0, 15, 3, 0);
         z++;
         return false;
     }
-#endif
+    
+    if (z <= 59) {
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[1], 0.14, -1.5, 18, 3.5, 3);
+        put_cmd(reference[2], 0.12, 0, 15, 3, -1);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[4], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[5], 0.12, 0, 15, 3, 0);
+        z++;
+        return false;
+    }
+
+    if (z <= 79) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        z++;
+        return false;
+    }
+
+    if (z <= 99) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        z++;
+        return false;
+    }
 
     return false;
 }
@@ -333,7 +377,7 @@ void serial_isr()
 
 void command()
 {
-    while(pc.readable()) {
+    while (pc.readable()) {
         const char c = pc.getc();
         switch (c) {
         case 27: // 27 == ESC
