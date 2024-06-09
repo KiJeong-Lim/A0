@@ -45,6 +45,7 @@ Ticker      sendCAN;
 long int    x       = 0;
 long int    y       = 0;
 long int    z       = 0;
+long int    w       = 0;
 int         obs     = -1;
 long int    logger  = 0;
 bool        pid_on  = false;
@@ -208,17 +209,17 @@ bool operation()
         put_cmd(reference[0], 0.12, 2.0, 18, 3.5, 2);
         put_cmd(reference[1], 0.115, 0.0, 18, 3.5, 3.5);
         put_cmd(reference[2], 0.10, 0.0, 15, 3, 2);
-        put_cmd(reference[3], 0.06, 0, 18, 3.5, 0);
+        put_cmd(reference[3], 0.05, 0, 18, 3.5, 0);
         put_cmd(reference[4], 0.12, -2.0, 18, 3.5, -1);
         put_cmd(reference[5], 0.10, 0, 15, 3, -2);
         y++;
         return false;
     }
 
-    if (y <= 39) {
-        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
-        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
-        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+    if (y <= 49) {
+        put_cmd(reference[0], 0.12, 2, 18, 3.5, 1);
+        put_cmd(reference[1], 0.10, 0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.10, 0, 15, 3, 3);
         put_cmd(reference[3], 0.14, 0, 18, 3.5, 3);
         put_cmd(reference[4], 0.14, 1, 18, 3.5, 3);
         put_cmd(reference[5], 0.12, 0, 15, 3, -1);
@@ -228,10 +229,10 @@ bool operation()
     
     if (y <= 59) {
         put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
-        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[1], 0.11, 0, 18, 3.5, 3.5);
         put_cmd(reference[2], 0.12, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.14, 0, 18, 3.5, 3);
-        put_cmd(reference[4], 0.14, 1, 18, 3.5, 3);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.12, -1.5, 18, 3.5, 3);
         put_cmd(reference[5], 0.12, 0, 15, 3, -1);
         y++;
         return false;
@@ -246,7 +247,6 @@ bool operation()
         put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         y++;
         return false;
-        
     }
 
     if (y <= 99) {
@@ -254,16 +254,15 @@ bool operation()
         put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[2], 0.04, 0, 15, 3, 0);
         put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.15, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
         y++;
         return false;
-
     }
+
     if (z <= 0) {
         return false;
     }
-
 
     if (z <= 19) {
         put_cmd(reference[0], 0.06, 0, 18, 3.5, 0);
@@ -296,19 +295,18 @@ bool operation()
         put_cmd(reference[5], 0.12, 0, 15, 3, 0);
         z++;
         return false;
+    
     }
-
     if (z <= 79) {
-        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
-        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
-        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[1], 0.14, -1.5, 18, 3.5, 3);
+        put_cmd(reference[2], 0.12, 0, 15, 3, -1);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[4], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[5], 0.12, 0, 15, 3, 0);
         z++;
         return false;
     }
-
     if (z <= 99) {
         put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
         put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
@@ -319,6 +317,87 @@ bool operation()
         z++;
         return false;
     }
+
+    if (z <= 119) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        z++;
+        return false;
+    }
+
+    if (w <= 0) {
+        return false;
+    }
+
+    if (w <= 19) {
+        put_cmd(reference[0], 0.12, 2.0, 18, 3.5, 2);
+        put_cmd(reference[1], 0.115, 0.0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.10, 0.0, 15, 3, 2);
+        put_cmd(reference[3], 0.06, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.09, -2.0, 18, 3.5, -1);
+        put_cmd(reference[5], 0.10, 0, 15, 3, -2);
+        w++;
+        return false;
+    }
+
+    if (w <= 39) {
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.14, 1, 18, 3.5, 3);
+        put_cmd(reference[5], 0.13, 0, 15, 3, -1);
+        w++;
+        return false;
+    }
+    
+    if (w <= 59) {
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.14, -1.5, 18, 3.5, 3);
+        put_cmd(reference[5], 0.12, 0, 15, 3, -1);
+        w++;
+        return false;
+    }
+        
+    if (w <= 79) {
+        put_cmd(reference[0], 0.15, 0, 18, 3.5, 1);
+        put_cmd(reference[1], 0.12, 0, 18, 3.5, 3.5);
+        put_cmd(reference[2], 0.12, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.15, 0, 18, 3.5, 3);
+        put_cmd(reference[4], 0.14, -1.5, 18, 3.5, 3);
+        put_cmd(reference[5], 0.12, 0, 15, 3, -1);
+        w++;
+        return false;
+    }
+
+    if (w <= 99) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        w++;
+        return false;
+    }
+
+    if (w <= 119) {
+        put_cmd(reference[0], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[1], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[2], 0.04, 0, 15, 3, 0);
+        put_cmd(reference[3], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[4], 0.14, 0, 18, 3.5, 0);
+        put_cmd(reference[5], 0.04, 0, 15, 3, 0);    
+        w++;
+        return false;
+    }    
 
     return false;
 }
@@ -573,10 +652,17 @@ void command()
             printf("\n\rRun3\n\r");
             break;
 
+        case 'u':
+            w = 1;
+            logger = 1;
+            printf("\n\rRun4\n\r");
+            break;
+
         case 'o':
             x = 0;
             y = 0;
             z = 0;
+            w = 0;
             obs = 0;
             logger = 0;
             printf("\n\rObserve\n\r");
@@ -604,6 +690,7 @@ void command()
             x = 0;
             y = 0;
             z = 0;
+            w = 0;
             obs = -1;
             logger = 0;
             printf("\n\rBreak\n\r");
@@ -641,6 +728,7 @@ void command()
             x = 0;
             y = 0;
             z = 0;
+            w = 0;
             obs = -1;
             logger = 0;
             can1.write(txMsg1);
@@ -699,6 +787,7 @@ int main(void)
     x = 0;
     y = 0;
     z = 0;
+    w = 0;
     obs = -1;
     logger = 0;
     timer.start();
